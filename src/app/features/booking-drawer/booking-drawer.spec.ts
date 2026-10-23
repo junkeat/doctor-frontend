@@ -81,15 +81,13 @@ describe('BookingDrawer', () => {
     expect(body().textContent).toContain('Your information is secure and confidential.');
   });
 
-  it('offers time slots from the doctor hours', () => {
-    const slots = c().timeSlots();
-    expect(slots[0].label).toBe('Today, 9:00 AM'.replace('Today', 'Today'));
-    expect(slots.some((s) => s.label === 'Tomorrow, 9:30 PM')).toBe(true);
+  it('renders a datetime picker', () => {
+    expect(body().querySelector('p-datepicker')).toBeTruthy();
   });
 
   it('requires a time and a reason (min 1 character)', () => {
     expect(c().form.valid).toBe(false);
-    c().form.patchValue({ scheduledAt: '2026-10-23T15:30:00+08:00' });
+    c().form.patchValue({ scheduledAt: new Date('2026-10-23T15:30:00+08:00') });
     expect(c().form.valid).toBe(false);
     c().form.patchValue({ reason: '   ' });
     expect(c().form.controls['reason'].hasError('required')).toBe(true);
@@ -123,7 +121,7 @@ describe('BookingDrawer', () => {
     component.booked.subscribe(booked);
     c().form.patchValue({
       type: 'video',
-      scheduledAt: '2026-10-23T15:30:00+08:00',
+      scheduledAt: new Date('2026-10-23T15:30:00+08:00'),
       reason: '  Fever and sore throat for 2 days  ',
     });
 

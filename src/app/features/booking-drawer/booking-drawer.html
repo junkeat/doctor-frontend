@@ -89,20 +89,20 @@
         <label class="step__title" for="scheduledAt">
           <span class="step__num">2</span>Preferred Time
         </label>
-        <p-select
+        <p-datepicker
           inputId="scheduledAt"
           formControlName="scheduledAt"
-          [options]="timeSlots()"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select a time"
-          dropdownIcon="pi pi-calendar"
+          [showTime]="true"
+          hourFormat="12"
+          [stepMinute]="30"
+          [minDate]="minDate()"
+          [showIcon]="true"
+          iconDisplay="input"
           appendTo="body"
-          scrollHeight="16rem"
+          placeholder="Select date and time"
           [fluid]="true"
           [invalid]="!!fieldError('scheduledAt')"
-          emptyMessage="No times left today or tomorrow."
-          [ariaLabel]="'Preferred time'"
+          ariaLabel="Preferred time"
         />
         @if (fieldError('scheduledAt'); as error) {
           <small class="field-error" role="alert">{{ error }}</small>

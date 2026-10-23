@@ -22,18 +22,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { Button } from 'primeng/button';
+import { DatePicker } from 'primeng/datepicker';
 import { Drawer } from 'primeng/drawer';
 import { Message } from 'primeng/message';
 import { RadioButton } from 'primeng/radiobutton';
-import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { map } from 'rxjs';
 import { parseApiError } from '../../core/api/api-error';
 import { ApiService } from '../../core/api/api.service';
 import { Consultation, ConsultationType, Doctor, StoreConsultationRequest } from '../../core/models';
 import { AppAvatar } from '../../shared/avatar/avatar';
-import { formatTimeOfDay } from '../../shared/utils/kl-time';
-import { generateTimeSlots } from './time-slots';
+import { formatTimeOfDay, toKlIsoString } from '../../shared/utils/kl-time';
 
 export const REASON_MAX_LENGTH = 500;
 
@@ -60,7 +59,7 @@ function notBlank(control: AbstractControl<string>): ValidationErrors | null {
 
 @Component({
   selector: 'app-booking-drawer',
-  imports: [ReactiveFormsModule, Drawer, Button, Message, RadioButton, Select, Textarea, AppAvatar],
+  imports: [ReactiveFormsModule, Drawer, Button, Message, RadioButton, DatePicker, Textarea, AppAvatar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './booking-drawer.html',
   styleUrl: './booking-drawer.scss',
@@ -93,23 +92,20 @@ export class BookingDrawer {
     },
   ];
 
-  protected readonly form = inject(FormBuilder).nonNullable.group({
-    type: ['chat' as ConsultationType, Validators.required],
-    scheduledAt: ['', Validators.required],
-    reason: ['', [notBlank, Validators.maxLength(REASON_MAX_LENGTH)]],
+  private readonly fb = inject(FormBuilder);
+
+  protected readonly form = this.fb.group({
+    type: this.fb.nonNullable.control<ConsultationType>('chat', Validators.required),
+    scheduledAt: this.fb.control<Date | string | null>(null, Validators.required),
+    reason: this.fb.nonNullable.control('', [notBlank, Validators.maxLength(REASON_MAX_LENGTH)]),
   });
 
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly serverErrors = signal<Partial<Record<FormField, string>>>({});
 
-  /** "now" is refreshed every time the drawer opens, so past times are removed. */
-  private readonly now = signal(new Date());
-
-  protected readonly timeSlots = computed(() => {
-    const doctor = this.doctor();
-    return doctor ? generateTimeSlots(doctor.available_from, doctor.available_to, this.now()) : [];
-  });
+  /** "now" is refreshed every time the drawer opens, so past times cannot be picked. */
+  protected readonly minDate = signal(new Date());
 
   protected readonly hours = computed(() => {
     const doctor = this.doctor();
@@ -186,10 +182,15 @@ export class BookingDrawer {
     }
 
     const value = this.form.getRawValue();
+    const scheduledAt =
+      value.scheduledAt instanceof Date
+        ? toKlIsoString(value.scheduledAt)
+        : (value.scheduledAt ?? '');
+
     const body: StoreConsultationRequest = {
       doctor_id: doctor.id,
       type: value.type,
-      scheduled_at: value.scheduledAt,
+      scheduled_at: scheduledAt,
       reason: value.reason.trim(),
     };
 
@@ -231,8 +232,8 @@ export class BookingDrawer {
   }
 
   private resetForm(): void {
-    this.now.set(new Date());
-    this.form.reset({ type: 'chat', scheduledAt: '', reason: '' });
+    this.minDate.set(new Date());
+    this.form.reset({ type: 'chat', scheduledAt: null, reason: '' });
     this.errorMessage.set(null);
     this.serverErrors.set({});
     this.submitting.set(false);

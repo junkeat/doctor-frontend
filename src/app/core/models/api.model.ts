@@ -18,6 +18,11 @@ export interface LoginResponse {
   token: string;
 }
 
+/** `POST /logout` 200 response. */
+export interface LogoutResponse {
+  message: string;
+}
+
 /** `StoreConsultationRequest` from /docs/api.json. */
 export interface StoreConsultationRequest {
   doctor_id: number;

@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, firstValueFrom, map, tap } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import { LoginRequest, User } from '../models';
 
@@ -10,10 +10,10 @@ export const USER_STORAGE_KEY = 'healthlink.user';
 /**
  * Holds the Sanctum token and the logged-in user.
  *
- * The API has no `GET /user` and no `POST /logout` (see /docs/api.json), so:
+ * The API has no `GET /user` (see /docs/api.json), so:
  * - the user returned by `POST /login` is kept in localStorage with the token and
  *   restored on app start;
- * - logout only clears the token on the client;
+ * - logout calls `POST /logout`, then clears the token and user (even if the request fails);
  * - an invalid or expired token is caught by the first 401 (see `authInterceptor`).
  */
 @Injectable({ providedIn: 'root' })
@@ -58,8 +58,15 @@ export class AuthService {
     return user;
   }
 
-  /** Clears the session and goes to the login page. */
+  /** Calls `POST /logout`, then clears the session (even on error) and goes to the login page. */
   async logout(): Promise<void> {
+    if (this.tokenState()) {
+      try {
+        await firstValueFrom(this.api.logout());
+      } catch {
+        // Clear the token even if the logout request fails.
+      }
+    }
     this.clearSession();
     await this.router.navigateByUrl('/login');
   }

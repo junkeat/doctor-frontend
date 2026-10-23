@@ -95,19 +95,40 @@ describe('AuthService', () => {
     expect(service.isLoggedIn()).toBe(false);
   });
 
-  it('logout() clears everything and goes to /login without calling the API', async () => {
+  it('logout() calls POST /logout, clears everything and goes to /login', async () => {
     localStorage.setItem(TOKEN_STORAGE_KEY, 'tok');
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
     setup();
     service.loadCurrentUser();
 
-    await service.logout();
+    const promise = service.logout();
+    const req = http.expectOne(`${environment.apiUrl}/logout`);
+    expect(req.request.method).toBe('POST');
+    req.flush({ message: 'Logged out successfully.' });
+    await promise;
 
     expect(service.isLoggedIn()).toBe(false);
     expect(service.token()).toBeNull();
     expect(service.currentUser()).toBeNull();
     expect(localStorage.getItem(TOKEN_STORAGE_KEY)).toBeNull();
     expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
-    http.expectNone(`${environment.apiUrl}/logout`);
+  });
+
+  it('logout() clears the session and goes to /login even if POST /logout fails', async () => {
+    localStorage.setItem(TOKEN_STORAGE_KEY, 'tok');
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    setup();
+    service.loadCurrentUser();
+
+    const promise = service.logout();
+    http
+      .expectOne(`${environment.apiUrl}/logout`)
+      .flush({ message: 'Server error' }, { status: 500, statusText: 'Error' });
+    await promise;
+
+    expect(service.isLoggedIn()).toBe(false);
+    expect(service.token()).toBeNull();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEY)).toBeNull();
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
   });
 });

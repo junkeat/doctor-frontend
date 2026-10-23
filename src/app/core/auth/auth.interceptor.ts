@@ -28,6 +28,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
+        if (isLogoutUrl(req.url)) {
+          return throwError(() => error);
+        }
         // Several requests can fail at once; only react to the first one.
         if (auth.token()) {
           auth.clearSession();
@@ -54,4 +57,9 @@ function isApiUrl(url: string): boolean {
 function isPublicAuthUrl(url: string): boolean {
   const path = url.slice(environment.apiUrl.length).split('?')[0];
   return (PUBLIC_AUTH_PATHS as readonly string[]).includes(path);
+}
+
+function isLogoutUrl(url: string): boolean {
+  const path = url.slice(environment.apiUrl.length).split('?')[0];
+  return path === '/logout';
 }

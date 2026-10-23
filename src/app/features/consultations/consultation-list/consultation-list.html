@@ -1,0 +1,64 @@
+<p-card class="panel">
+  <ng-template #title>
+    <h2 class="panel__title">My Consultations</h2>
+  </ng-template>
+  <ng-template #subtitle>
+    <p class="panel__subtitle">View your upcoming and past consultations.</p>
+  </ng-template>
+
+  @if (loading()) {
+    <div class="items" aria-busy="true" aria-label="Loading consultations">
+      @for (row of skeletonRows; track row) {
+        <div class="item item--skeleton">
+          <p-skeleton shape="circle" size="2.75rem" />
+          <div class="item__body">
+            <p-skeleton width="8rem" height="1rem" />
+            <p-skeleton width="11rem" height="0.875rem" />
+            <p-skeleton width="9rem" height="0.875rem" />
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (error(); as message) {
+    <p-message severity="error" icon="pi pi-exclamation-circle" role="alert">
+      <div class="error">
+        <span>{{ message }}</span>
+        <p-button label="Try again" icon="pi pi-refresh" size="small" [outlined]="true" (onClick)="retry.emit()" />
+      </div>
+    </p-message>
+  } @else if (consultations().length === 0) {
+    <div class="empty">
+      <i class="pi pi-calendar" aria-hidden="true"></i>
+      <p>You have no consultations yet.</p>
+    </div>
+  } @else {
+    <ul class="items">
+      @for (c of consultations(); track c.id) {
+        <li>
+          <button
+            type="button"
+            class="item"
+            [attr.aria-label]="'View consultation with ' + c.doctor.name"
+            (click)="onSelect(c, $event)"
+          >
+            <span class="item__icon" aria-hidden="true">
+              <i [class]="c.type === 'video' ? 'pi pi-video' : 'pi pi-comment'"></i>
+            </span>
+            <span class="item__body">
+              <span class="item__top">
+                <span class="item__name">{{ c.doctor.name }}</span>
+                <app-status-pill [status]="c.status" />
+              </span>
+              <span class="item__meta">{{ c.doctor.specialty }} · {{ typeLabel(c.type) }}</span>
+              <span class="item__date">
+                <i class="pi pi-calendar" aria-hidden="true"></i>
+                {{ c.scheduled_at | klDateTime }}
+              </span>
+            </span>
+            <i class="pi pi-chevron-right item__arrow" aria-hidden="true"></i>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</p-card>

@@ -1,0 +1,71 @@
+<main class="login">
+  <p-card class="login__card">
+    <div class="login__logo">
+      <app-logo size="large" />
+    </div>
+
+    <h1 class="login__title">Welcome back</h1>
+    <p class="login__subtitle">Log in to consult a doctor.</p>
+
+    @if (errorMessage(); as message) {
+      <p-message severity="error" class="login__alert" icon="pi pi-times-circle" role="alert">
+        {{ message }}
+      </p-message>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="login__form">
+      <div class="field">
+        <label for="email" class="field__label">Email</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+          [fluid]="true"
+          [invalid]="showError('email')"
+          [attr.aria-invalid]="showError('email')"
+          [attr.aria-describedby]="showError('email') ? 'email-error' : null"
+        />
+        @if (showError('email')) {
+          <small id="email-error" class="field-error">
+            @if (form.controls.email.hasError('required')) {
+              Email is required.
+            } @else {
+              Please enter a valid email address.
+            }
+          </small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password" class="field__label">Password</label>
+        <!-- Re-created after a failed login so the typed text is really removed from the box. -->
+        @for (instance of [passwordInstance()]; track instance) {
+          <p-password
+            inputId="password"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            [fluid]="true"
+            autocomplete="current-password"
+            placeholder="Your password"
+            [invalid]="showError('password')"
+          />
+        }
+        @if (showError('password')) {
+          <small id="password-error" class="field-error">Password is required.</small>
+        }
+      </div>
+
+      <p-button
+        type="submit"
+        label="Log in"
+        [fluid]="true"
+        [loading]="submitting()"
+        styleClass="login__submit"
+      />
+    </form>
+  </p-card>
+</main>

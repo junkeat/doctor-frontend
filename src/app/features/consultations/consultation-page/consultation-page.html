@@ -1,0 +1,52 @@
+<app-header [userName]="userName()" (logout)="logout()" />
+
+<main class="page">
+  <section class="hero" aria-labelledby="hero-title">
+    <span class="hero__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M6 3v6a4 4 0 0 0 8 0V3M10 13v2a5 5 0 0 0 10 0v-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        <circle cx="20" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.8" />
+      </svg>
+    </span>
+    <p class="hero__eyebrow">Welcome to HealthLink</p>
+    <h1 class="hero__title" id="hero-title">Consult a Doctor</h1>
+    <p class="hero__subtitle">Chat or video call with a licensed doctor, 9am–10pm daily.</p>
+  </section>
+
+  <div class="grid">
+    <app-doctor-list
+      class="grid__doctors"
+      [doctors]="store.doctors()"
+      [loading]="store.doctorsLoading()"
+      [error]="store.doctorsError()"
+      [activeDoctorId]="drawerOpen() ? drawerDoctor()?.id ?? null : null"
+      (book)="openBooking($event)"
+      (retry)="store.loadDoctors()"
+    />
+    <app-consultation-list
+      class="grid__consultations"
+      [consultations]="store.consultations()"
+      [loading]="store.consultationsLoading()"
+      [error]="store.consultationsError()"
+      (select)="openDetail($event)"
+      (retry)="store.loadConsultations()"
+    />
+  </div>
+</main>
+
+<app-booking-drawer
+  [doctor]="drawerDoctor()"
+  [(visible)]="drawerOpen"
+  (booked)="onBooked($event)"
+  (closed)="onDrawerClosed()"
+/>
+
+<app-consultation-detail
+  [consultation]="detailConsultation()"
+  [(visible)]="detailOpen"
+  [cancelling]="cancelling()"
+  (cancelRequested)="confirmCancel($event)"
+  (closed)="onDetailClosed()"
+/>
+
+<p-confirmdialog />

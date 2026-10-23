@@ -1,0 +1,48 @@
+<p-dialog
+  header="Consultation details"
+  [(visible)]="visible"
+  [modal]="true"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [style]="{ width: '28rem', maxWidth: '95vw' }"
+  (onHide)="closed.emit()"
+>
+  @if (consultation(); as c) {
+    <dl class="details">
+      <div class="details__row">
+        <dt>Doctor</dt>
+        <dd>{{ c.doctor.name }}<span class="muted"> · {{ c.doctor.specialty }}</span></dd>
+      </div>
+      <div class="details__row">
+        <dt>Type</dt>
+        <dd>{{ typeLabel(c.type) }}</dd>
+      </div>
+      <div class="details__row">
+        <dt>Time</dt>
+        <dd>{{ c.scheduled_at | klDateTime }}</dd>
+      </div>
+      <div class="details__row">
+        <dt>Status</dt>
+        <dd><app-status-pill [status]="c.status" /></dd>
+      </div>
+      <div class="details__row details__row--block">
+        <dt>Reason</dt>
+        <dd class="reason">{{ c.reason }}</dd>
+      </div>
+    </dl>
+  }
+
+  <ng-template #footer>
+    @if (showCancel()) {
+      <p-button
+        label="Cancel Consultation"
+        icon="pi pi-times"
+        severity="danger"
+        [outlined]="true"
+        [loading]="cancelling()"
+        (onClick)="cancelRequested.emit(consultation()!)"
+      />
+    }
+    <p-button label="Close" severity="secondary" (onClick)="visible.set(false)" />
+  </ng-template>
+</p-dialog>

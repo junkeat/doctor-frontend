@@ -1,0 +1,137 @@
+:host {
+  display: block;
+}
+
+.panel {
+  display: block;
+  border-radius: var(--hl-radius);
+  border: 1px solid var(--hl-border);
+  box-shadow: var(--hl-shadow);
+}
+
+.panel__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.panel__subtitle {
+  color: var(--hl-text-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem;
+  border: 1px solid var(--hl-border);
+  border-radius: var(--hl-radius);
+  background: var(--hl-surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+
+  &:hover {
+    border-color: #b9cdf7;
+    background: #fafcff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--hl-primary);
+    outline-offset: 2px;
+  }
+}
+
+.item--skeleton {
+  cursor: default;
+}
+
+.item__icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--hl-primary-soft);
+  color: var(--hl-primary);
+}
+
+.item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.item__name {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item__meta {
+  font-size: 0.875rem;
+  color: var(--hl-text-muted);
+}
+
+.item__date {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--hl-text-muted);
+
+  .pi {
+    font-size: 0.8125rem;
+  }
+}
+
+.item__arrow {
+  flex: none;
+  color: var(--hl-text-muted);
+  font-size: 0.875rem;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  color: var(--hl-text-muted);
+
+  .pi {
+    font-size: 2rem;
+  }
+}

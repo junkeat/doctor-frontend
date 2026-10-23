@@ -1,0 +1,139 @@
+:host {
+  display: block;
+}
+
+.panel {
+  display: block;
+  border-radius: var(--hl-radius);
+  border: 1px solid var(--hl-border);
+  box-shadow: var(--hl-shadow);
+}
+
+.panel__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.panel__subtitle {
+  color: var(--hl-text-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  border: 1.5px solid var(--hl-border);
+  border-radius: var(--hl-radius);
+  background: var(--hl-surface);
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+
+  &--active {
+    border-color: var(--hl-primary);
+    background: var(--hl-primary-soft);
+  }
+}
+
+.row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.row__name {
+  font-weight: 700;
+}
+
+.row__specialty {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.125rem;
+  color: var(--hl-text-muted);
+  font-size: 0.875rem;
+}
+
+.steth {
+  width: 1rem;
+  height: 1rem;
+  color: var(--hl-primary);
+  flex: none;
+}
+
+.availability {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--hl-text-muted);
+
+  &__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--hl-unavailable);
+  }
+
+  &--on {
+    color: var(--hl-success);
+  }
+
+  &--on &__dot {
+    background: var(--hl-success);
+  }
+}
+
+.row__action {
+  flex: none;
+}
+
+.row--skeleton .row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  color: var(--hl-text-muted);
+
+  .pi {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row__action {
+    width: 100%;
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}

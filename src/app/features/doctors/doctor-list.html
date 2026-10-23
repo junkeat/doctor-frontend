@@ -1,0 +1,66 @@
+<p-card class="panel">
+  <ng-template #title>
+    <h2 class="panel__title">Available Doctors</h2>
+  </ng-template>
+  <ng-template #subtitle>
+    <p class="panel__subtitle">
+      Find the right doctor for your needs. All doctors are available for online consultations.
+    </p>
+  </ng-template>
+
+  @if (loading()) {
+    <div class="rows" aria-busy="true" aria-label="Loading doctors">
+      @for (row of skeletonRows; track row) {
+        <div class="row row--skeleton">
+          <p-skeleton shape="circle" size="3.25rem" />
+          <div class="row__info">
+            <p-skeleton width="9rem" height="1rem" />
+            <p-skeleton width="7rem" height="0.875rem" styleClass="mt" />
+          </div>
+          <p-skeleton width="10rem" height="2.5rem" borderRadius="0.5rem" />
+        </div>
+      }
+    </div>
+  } @else if (error(); as message) {
+    <p-message severity="error" icon="pi pi-exclamation-circle" role="alert">
+      <div class="error">
+        <span>{{ message }}</span>
+        <p-button label="Try again" icon="pi pi-refresh" size="small" [outlined]="true" (onClick)="retry.emit()" />
+      </div>
+    </p-message>
+  } @else if (doctors().length === 0) {
+    <div class="empty">
+      <i class="pi pi-inbox" aria-hidden="true"></i>
+      <p>No doctors are available right now.</p>
+    </div>
+  } @else {
+    <ul class="rows">
+      @for (doctor of doctors(); track doctor.id) {
+        <li class="row" [class.row--active]="activeDoctorId() === doctor.id">
+          <app-avatar [name]="doctor.name" [imageUrl]="doctor.photo_url" size="medium" />
+          <div class="row__info">
+            <p class="row__name">{{ doctor.name }}</p>
+            <p class="row__specialty">
+              <svg class="steth" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M6 3v6a4 4 0 0 0 8 0V3M10 13v2a5 5 0 0 0 10 0v-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <circle cx="20" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              {{ doctor.specialty }}
+            </p>
+            <p class="availability" [class.availability--on]="doctor.available_now">
+              <span class="availability__dot" aria-hidden="true"></span>
+              {{ doctor.available_now ? 'Available now' : 'Unavailable' }}
+            </p>
+          </div>
+          <p-button
+            class="row__action"
+            label="Book Consultation"
+            icon="pi pi-calendar"
+            [attr.aria-label]="'Book consultation with ' + doctor.name"
+            (onClick)="onBook(doctor, $event)"
+          />
+        </li>
+      }
+    </ul>
+  }
+</p-card>

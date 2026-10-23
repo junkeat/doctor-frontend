@@ -1,0 +1,156 @@
+<p-drawer
+  [(visible)]="visible"
+  position="right"
+  [modal]="true"
+  [dismissible]="true"
+  [closeOnEscape]="true"
+  [blockScroll]="true"
+  styleClass="booking-drawer"
+  ariaCloseLabel="Close booking drawer"
+  (onShow)="onShow()"
+  (onHide)="onHide()"
+>
+  <ng-template #header>
+    <div class="drawer-header">
+      <h2 class="drawer-header__title" id="booking-drawer-title" tabindex="-1" #drawerTitle>
+        Book Consultation
+      </h2>
+      @if (doctor(); as d) {
+        <p class="drawer-header__subtitle">Schedule a consultation with {{ d.name }}</p>
+      }
+    </div>
+  </ng-template>
+
+  @if (doctor(); as d) {
+    <form
+      class="booking"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+      aria-labelledby="booking-drawer-title"
+    >
+      <!-- Doctor summary -->
+      <section class="doctor-summary" aria-label="Selected doctor">
+        <app-avatar [name]="d.name" [imageUrl]="d.photo_url" size="medium" />
+        <div class="doctor-summary__info">
+          <p class="doctor-summary__name">{{ d.name }}</p>
+          <p class="doctor-summary__specialty">
+            <i class="pi pi-heart" aria-hidden="true"></i>{{ d.specialty }}
+          </p>
+          <p class="availability" [class.availability--on]="d.available_now">
+            <span class="availability__dot" aria-hidden="true"></span>
+            {{ d.available_now ? 'Available now' : 'Unavailable' }}
+            <span class="availability__hours">· {{ hours() }}</span>
+          </p>
+        </div>
+      </section>
+
+      @if (errorMessage(); as message) {
+        <p-message severity="error" icon="pi pi-exclamation-circle" role="alert" class="booking__alert">
+          {{ message }}
+        </p-message>
+      }
+
+      <!-- Step 1 -->
+      <fieldset class="step">
+        <legend class="step__title"><span class="step__num">1</span>Consultation Type</legend>
+        <div class="type-grid">
+          @for (option of typeOptions; track option.value) {
+            <label
+              class="type-card"
+              [class.is-selected]="selectedType() === option.value"
+              [for]="'type-' + option.value"
+            >
+              <span class="type-card__control">
+                <p-radiobutton
+                  formControlName="type"
+                  name="type"
+                  [value]="option.value"
+                  [inputId]="'type-' + option.value"
+                  [class.is-checked]="selectedType() === option.value"
+                />
+                @if (selectedType() === option.value) {
+                  <span class="type-card__check" aria-hidden="true"><i class="pi pi-check"></i></span>
+                }
+              </span>
+              <span class="type-card__icon" aria-hidden="true"><i [class]="option.icon"></i></span>
+              <span class="type-card__label">{{ option.label }}</span>
+              <span class="type-card__desc">{{ option.description }}</span>
+            </label>
+          }
+        </div>
+        @if (fieldError('type'); as error) {
+          <small class="field-error" role="alert">{{ error }}</small>
+        }
+      </fieldset>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <label class="step__title" for="scheduledAt">
+          <span class="step__num">2</span>Preferred Time
+        </label>
+        <p-select
+          inputId="scheduledAt"
+          formControlName="scheduledAt"
+          [options]="timeSlots()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select a time"
+          dropdownIcon="pi pi-calendar"
+          appendTo="body"
+          scrollHeight="16rem"
+          [fluid]="true"
+          [invalid]="!!fieldError('scheduledAt')"
+          emptyMessage="No times left today or tomorrow."
+          [ariaLabel]="'Preferred time'"
+        />
+        @if (fieldError('scheduledAt'); as error) {
+          <small class="field-error" role="alert">{{ error }}</small>
+        }
+        <p class="hint">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+          Please select a time within the doctor's available hours.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <label class="step__title" for="reason"><span class="step__num">3</span>Reason for Visit</label>
+        <div class="reason">
+          <textarea
+            pTextarea
+            id="reason"
+            formControlName="reason"
+            rows="4"
+            [attr.maxlength]="reasonMaxLength"
+            placeholder="Fever and sore throat for 2 days…"
+            [invalid]="!!fieldError('reason')"
+            [attr.aria-describedby]="'reason-counter'"
+            class="reason__input"
+          ></textarea>
+          <span id="reason-counter" class="reason__counter" aria-live="polite">
+            {{ reasonLength() }}/{{ reasonMaxLength }}
+          </span>
+        </div>
+        @if (fieldError('reason'); as error) {
+          <small class="field-error" role="alert">{{ error }}</small>
+        }
+      </div>
+
+      <p-button
+        type="submit"
+        label="Confirm Booking"
+        icon="pi pi-calendar-plus"
+        [fluid]="true"
+        [loading]="submitting()"
+        [disabled]="!canSubmit()"
+        styleClass="booking__submit"
+      />
+
+      <p class="secure-note">
+        <i class="pi pi-lock" aria-hidden="true"></i>
+        Your information is secure and confidential.
+      </p>
+    </form>
+  }
+</p-drawer>

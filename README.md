@@ -45,9 +45,6 @@ The app follows `http://127.0.0.1:8000/docs/api.json`. Differences from the orig
 - Logout calls `POST /logout`, then clears the token and user on the client (even if the request fails).
 - The user from `POST /login` is saved in `localStorage` with the token and restored on app start.
   An expired token is caught by the first `401` (the app clears the session and goes to `/login`).
-- The **Cancel Consultation** button is behind `environment.features.cancelConsultation`
-  (default `false`). Set it to `true` once the cancel endpoint exists.
-- Statuses in the API are `scheduled` and `completed`. The UI also supports `cancelled`.
 - `scheduled_at` is sent as ISO 8601 with `+08:00` (Asia/Kuala_Lumpur). The API returns UTC; the UI shows Kuala Lumpur time.
 
 ## Structure

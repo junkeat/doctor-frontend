@@ -9,6 +9,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/login/login.page').then((m) => m.LoginPage),
   },
   {
+    path: 'register',
+    title: 'Create account · HealthLink',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/register/register.page').then((m) => m.RegisterPage),
+  },
+  {
     path: '',
     pathMatch: 'full',
     title: 'Consult a Doctor · HealthLink',

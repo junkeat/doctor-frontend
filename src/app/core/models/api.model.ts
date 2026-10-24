@@ -12,7 +12,15 @@ export interface LoginRequest {
   password: string;
 }
 
-/** `POST /login` 200 response. */
+/** `RegisterRequest` from /docs/api.json. */
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+/** `POST /login` (200) and `POST /register` (201) response. */
 export interface LoginResponse {
   user: User;
   token: string;

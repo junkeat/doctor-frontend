@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { InputText } from 'primeng/inputtext';
@@ -12,7 +12,7 @@ import { Logo } from '../../shared/logo/logo';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule, Card, InputText, Password, Button, Message, Logo],
+  imports: [ReactiveFormsModule, RouterLink, Card, InputText, Password, Button, Message, Logo],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.page.html',
   styleUrl: './login.page.scss',
@@ -69,7 +69,13 @@ export class LoginPage {
 
 /** Only allow in-app paths, to avoid open redirects like `//evil.com`. */
 function safeReturnUrl(url: string | undefined): string {
-  if (!url || !url.startsWith('/') || url.startsWith('//') || url.startsWith('/login')) {
+  if (
+    !url ||
+    !url.startsWith('/') ||
+    url.startsWith('//') ||
+    url.startsWith('/login') ||
+    url.startsWith('/register')
+  ) {
     return '/';
   }
   return url;

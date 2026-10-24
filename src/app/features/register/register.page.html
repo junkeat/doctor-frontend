@@ -1,0 +1,103 @@
+<main class="register">
+  <p-card class="register__card">
+    <div class="register__logo">
+      <app-logo size="large" />
+    </div>
+
+    <h1 class="register__title">Create an account</h1>
+    <p class="register__subtitle">Sign up to book a consultation with a doctor.</p>
+
+    @if (errorMessage(); as message) {
+      <p-message severity="error" class="register__alert" icon="pi pi-times-circle" role="alert">
+        {{ message }}
+      </p-message>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="register__form">
+      <div class="field">
+        <label for="name" class="field__label">Name</label>
+        <input
+          pInputText
+          id="name"
+          type="text"
+          formControlName="name"
+          autocomplete="name"
+          placeholder="Your full name"
+          [fluid]="true"
+          [invalid]="!!fieldError('name')"
+          [attr.aria-invalid]="!!fieldError('name')"
+          [attr.aria-describedby]="fieldError('name') ? 'name-error' : null"
+        />
+        @if (fieldError('name'); as error) {
+          <small id="name-error" class="field-error">{{ error }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="email" class="field__label">Email</label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+          [fluid]="true"
+          [invalid]="!!fieldError('email')"
+          [attr.aria-invalid]="!!fieldError('email')"
+          [attr.aria-describedby]="fieldError('email') ? 'email-error' : null"
+        />
+        @if (fieldError('email'); as error) {
+          <small id="email-error" class="field-error">{{ error }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password" class="field__label">Password</label>
+        <p-password
+          inputId="password"
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          [fluid]="true"
+          autocomplete="new-password"
+          placeholder="At least 8 characters"
+          [invalid]="!!fieldError('password')"
+        />
+        @if (fieldError('password'); as error) {
+          <small id="password-error" class="field-error">{{ error }}</small>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password_confirmation" class="field__label">Confirm Password</label>
+        <p-password
+          inputId="password_confirmation"
+          formControlName="password_confirmation"
+          [feedback]="false"
+          [toggleMask]="true"
+          [fluid]="true"
+          autocomplete="new-password"
+          placeholder="Re-enter your password"
+          [invalid]="!!fieldError('password_confirmation')"
+        />
+        @if (fieldError('password_confirmation'); as error) {
+          <small id="password-confirm-error" class="field-error">{{ error }}</small>
+        }
+      </div>
+
+      <p-button
+        type="submit"
+        label="Create account"
+        [fluid]="true"
+        [loading]="submitting()"
+        styleClass="register__submit"
+      />
+    </form>
+
+    <p class="register__footer">
+      Already have an account?
+      <a routerLink="/login" class="register__link">Log in</a>
+    </p>
+  </p-card>
+</main>

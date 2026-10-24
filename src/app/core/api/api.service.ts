@@ -10,6 +10,7 @@ import {
   LoginRequest,
   LoginResponse,
   LogoutResponse,
+  RegisterRequest,
   StoreConsultationRequest,
 } from '../models';
 
@@ -25,6 +26,11 @@ export class ApiService {
   /** `POST /login` */
   login(body: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, body);
+  }
+
+  /** `POST /register` -> 201 */
+  register(body: RegisterRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.baseUrl}/register`, body);
   }
 
   /** `POST /logout` */

@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, firstValueFrom, map, tap } from 'rxjs';
 import { ApiService } from '../api/api.service';
-import { LoginRequest, User } from '../models';
+import { LoginRequest, RegisterRequest, User } from '../models';
 
 export const TOKEN_STORAGE_KEY = 'healthlink.token';
 export const USER_STORAGE_KEY = 'healthlink.user';
@@ -31,6 +31,14 @@ export class AuthService {
   /** Logs in and stores the session. Errors are passed through to the caller. */
   login(credentials: LoginRequest): Observable<User> {
     return this.api.login(credentials).pipe(
+      tap((res) => this.setSession(res.token, res.user)),
+      map((res) => res.user),
+    );
+  }
+
+  /** Registers a new account and stores the session. Errors are passed through to the caller. */
+  register(payload: RegisterRequest): Observable<User> {
+    return this.api.register(payload).pipe(
       tap((res) => this.setSession(res.token, res.user)),
       map((res) => res.user),
     );

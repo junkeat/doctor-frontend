@@ -1,6 +1,6 @@
 # HealthLink – Doctor Consultation Frontend
 
-Angular 22 + PrimeNG 22 (Aura preset, light mode) patient portal for the HealthLink Laravel API.
+Angular 22 + PrimeNG 21 patient portal for the HealthLink Laravel API.
 
 ## Requirements
 

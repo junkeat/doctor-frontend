@@ -62,15 +62,4 @@ export class ApiService {
       .post<DataResponse<Consultation>>(`${this.baseUrl}/consultations`, body)
       .pipe(map((res) => res.data));
   }
-
-  /**
-   * `PATCH /consultations/{id}/cancel`
-   *
-   * Not in /docs/api.json yet. Only used when `environment.features.cancelConsultation` is on.
-   */
-  cancelConsultation(id: number): Observable<Consultation> {
-    return this.http
-      .patch<DataResponse<Consultation>>(`${this.baseUrl}/consultations/${id}/cancel`, {})
-      .pipe(map((res) => res.data));
-  }
 }

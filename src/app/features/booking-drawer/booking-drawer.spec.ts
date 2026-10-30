@@ -61,7 +61,6 @@ describe('BookingDrawer', () => {
     component as unknown as {
       form: import('@angular/forms').FormGroup;
       canSubmit: () => boolean;
-      timeSlots: () => { label: string; value: string }[];
       submit: () => void;
       errorMessage: () => string | null;
     };
@@ -121,7 +120,7 @@ describe('BookingDrawer', () => {
     component.booked.subscribe(booked);
     c().form.patchValue({
       type: 'video',
-      scheduledAt: new Date('2026-10-23T15:30:00+08:00'),
+      scheduledAt: new Date(2026, 9, 23, 15, 30),
       reason: '  Fever and sore throat for 2 days  ',
     });
 

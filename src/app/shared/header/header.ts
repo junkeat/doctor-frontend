@@ -4,7 +4,6 @@ import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { AppAvatar } from '../avatar/avatar';
 import { Logo } from '../logo/logo';
-import { USER_ROLE_LABEL } from './header.constants';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +16,6 @@ export class Header {
   readonly userName = input.required<string>();
   readonly logout = output<void>();
 
-  protected readonly roleLabel = USER_ROLE_LABEL;
   protected readonly menuOpen = signal(false);
 
   protected readonly menuItems: MenuItem[] = [

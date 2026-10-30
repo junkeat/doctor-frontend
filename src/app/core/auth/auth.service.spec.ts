@@ -53,6 +53,28 @@ describe('AuthService', () => {
     expect(JSON.parse(localStorage.getItem(USER_STORAGE_KEY)!)).toEqual(user);
   });
 
+  it('register() POSTs payload and stores token and user', () => {
+    setup();
+    let result: unknown;
+    const payload = {
+      name: 'John',
+      email: 'john@example.com',
+      password: 'password',
+      password_confirmation: 'password',
+    };
+    service.register(payload).subscribe((u) => (result = u));
+
+    const req = http.expectOne(`${environment.apiUrl}/register`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(payload);
+    req.flush({ user, token: '4|xyz' }, { status: 201, statusText: 'Created' });
+
+    expect(result).toEqual(user);
+    expect(service.token()).toBe('4|xyz');
+    expect(service.currentUser()).toEqual(user);
+    expect(service.isLoggedIn()).toBe(true);
+  });
+
   it('login() leaves the session empty when credentials are wrong', () => {
     setup();
     let status = 0;

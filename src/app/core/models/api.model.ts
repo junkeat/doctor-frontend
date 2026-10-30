@@ -45,14 +45,3 @@ export interface StoreConsultationRequest {
 export interface ConsultationListQuery {
   status?: ConsultationStatus | null;
 }
-
-/** `ValidationException` response (422). */
-export interface ValidationErrorResponse {
-  message: string;
-  errors: Record<string, string[]>;
-}
-
-/** Generic error body (`AuthenticationException` 401, login 401, ...). */
-export interface ErrorResponse {
-  message: string;
-}

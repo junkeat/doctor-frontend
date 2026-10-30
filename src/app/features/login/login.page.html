@@ -1,19 +1,19 @@
-<main class="login">
-  <p-card class="login__card">
-    <div class="login__logo">
+<main class="auth">
+  <p-card class="auth__card">
+    <div class="auth__logo">
       <app-logo size="large" />
     </div>
 
-    <h1 class="login__title">Welcome back</h1>
-    <p class="login__subtitle">Log in to consult a doctor.</p>
+    <h1 class="auth__title">Welcome back</h1>
+    <p class="auth__subtitle">Log in to consult a doctor.</p>
 
     @if (errorMessage(); as message) {
-      <p-message severity="error" class="login__alert" icon="pi pi-times-circle" role="alert">
+      <p-message severity="error" class="auth__alert" icon="pi pi-times-circle" role="alert">
         {{ message }}
       </p-message>
     }
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="login__form">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="auth__form">
       <div class="field">
         <label for="email" class="field__label">Email</label>
         <input
@@ -64,13 +64,13 @@
         label="Log in"
         [fluid]="true"
         [loading]="submitting()"
-        styleClass="login__submit"
+        styleClass="auth__submit"
       />
     </form>
 
-    <p class="login__footer">
+    <p class="auth__footer">
       Don't have an account?
-      <a routerLink="/register" class="login__link">Create one</a>
+      <a routerLink="/register" class="auth__link">Create one</a>
     </p>
   </p-card>
 </main>

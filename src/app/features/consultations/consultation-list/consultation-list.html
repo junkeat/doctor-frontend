@@ -49,7 +49,7 @@
                 <span class="item__name">{{ c.doctor.name }}</span>
                 <app-status-pill [status]="c.status" />
               </span>
-              <span class="item__meta">{{ c.doctor.specialty }} · {{ typeLabel(c.type) }}</span>
+              <span class="item__meta">{{ c.doctor.specialty }} · {{ c.type === 'video' ? 'Video Call' : 'Chat' }}</span>
               <span class="item__date">
                 <i class="pi pi-calendar" aria-hidden="true"></i>
                 {{ c.scheduled_at | klDateTime }}

@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   ElementRef,
   computed,
   effect,
@@ -13,7 +12,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -28,7 +27,7 @@ import { Message } from 'primeng/message';
 import { RadioButton } from 'primeng/radiobutton';
 import { Textarea } from 'primeng/textarea';
 import { map } from 'rxjs';
-import { parseApiError } from '../../core/api/api-error';
+import { parseApiError, trackServerErrors } from '../../core/api/api-error';
 import { ApiService } from '../../core/api/api.service';
 import { Consultation, ConsultationType, Doctor, StoreConsultationRequest } from '../../core/models';
 import { AppAvatar } from '../../shared/avatar/avatar';
@@ -66,7 +65,6 @@ function notBlank(control: AbstractControl<string>): ValidationErrors | null {
 })
 export class BookingDrawer {
   private readonly api = inject(ApiService);
-  private readonly destroyRef = inject(DestroyRef);
 
   readonly doctor = input<Doctor | null>(null);
   readonly visible = model(false);
@@ -102,7 +100,7 @@ export class BookingDrawer {
 
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly serverErrors = signal<Partial<Record<FormField, string>>>({});
+  protected readonly serverErrors = trackServerErrors(this.form.controls);
 
   /** "now" is refreshed every time the drawer opens, so past times cannot be picked. */
   protected readonly minDate = signal(new Date());
@@ -140,18 +138,6 @@ export class BookingDrawer {
         untracked(() => this.resetForm());
       }
     });
-
-    // Typing in a field removes the API error shown under it.
-    for (const field of Object.keys(this.form.controls) as FormField[]) {
-      const control: AbstractControl = this.form.controls[field];
-      control.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-          if (this.serverErrors()[field]) {
-            this.serverErrors.update(({ [field]: _removed, ...rest }) => rest);
-          }
-        });
-    }
   }
 
   protected fieldError(field: FormField): string | null {

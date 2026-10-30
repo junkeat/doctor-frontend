@@ -103,13 +103,6 @@ describe('ApiService', () => {
     );
     expect(error?.status).toBe(422);
   });
-
-  it('cancelConsultation() PATCHes the cancel route', () => {
-    api.cancelConsultation(9).subscribe();
-    const req = http.expectOne(`${base}/consultations/9/cancel`);
-    expect(req.request.method).toBe('PATCH');
-    req.flush({ data: { ...consultation, status: 'cancelled' } });
-  });
 });
 
 describe('parseApiError', () => {

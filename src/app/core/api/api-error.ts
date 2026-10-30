@@ -1,4 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { WritableSignal, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl } from '@angular/forms';
 
 export interface ParsedApiError {
   status: number;
@@ -46,4 +49,19 @@ export function parseApiError(error: unknown): ParsedApiError {
   }
 
   return { status: error.status, message, fieldErrors };
+}
+
+/** Signal of server-side field errors that clears each field's error when the user edits it. */
+export function trackServerErrors<K extends string>(
+  controls: Record<K, AbstractControl>,
+): WritableSignal<Partial<Record<K, string>>> {
+  const errors = signal<Partial<Record<K, string>>>({});
+  for (const [key, control] of Object.entries<AbstractControl>(controls)) {
+    control.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+      if (errors()[key as K]) {
+        errors.update(({ [key as K]: _removed, ...rest }) => rest as Partial<Record<K, string>>);
+      }
+    });
+  }
+  return errors;
 }

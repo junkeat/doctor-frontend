@@ -44,9 +44,5 @@
 <app-consultation-detail
   [consultation]="detailConsultation()"
   [(visible)]="detailOpen"
-  [cancelling]="cancelling()"
-  (cancelRequested)="confirmCancel($event)"
   (closed)="onDetailClosed()"
 />
-
-<p-confirmdialog />

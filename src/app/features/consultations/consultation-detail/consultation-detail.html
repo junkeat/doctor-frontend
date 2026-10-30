@@ -15,7 +15,7 @@
       </div>
       <div class="details__row">
         <dt>Type</dt>
-        <dd>{{ typeLabel(c.type) }}</dd>
+        <dd>{{ c.type === 'video' ? 'Video Call' : 'Chat' }}</dd>
       </div>
       <div class="details__row">
         <dt>Time</dt>
@@ -33,16 +33,6 @@
   }
 
   <ng-template #footer>
-    @if (showCancel()) {
-      <p-button
-        label="Cancel Consultation"
-        icon="pi pi-times"
-        severity="danger"
-        [outlined]="true"
-        [loading]="cancelling()"
-        (onClick)="cancelRequested.emit(consultation()!)"
-      />
-    }
     <p-button label="Close" severity="secondary" (onClick)="visible.set(false)" />
   </ng-template>
 </p-dialog>

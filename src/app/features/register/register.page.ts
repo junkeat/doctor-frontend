@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -19,7 +12,7 @@ import { Card } from 'primeng/card';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
-import { parseApiError } from '../../core/api/api-error';
+import { parseApiError, trackServerErrors } from '../../core/api/api-error';
 import { AuthService } from '../../core/auth/auth.service';
 import { Logo } from '../../shared/logo/logo';
 
@@ -37,16 +30,13 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   imports: [ReactiveFormsModule, RouterLink, Card, InputText, Password, Button, Message, Logo],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register.page.html',
-  styleUrl: './register.page.scss',
 })
 export class RegisterPage {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly serverErrors = signal<Partial<Record<RegisterField, string>>>({});
 
   protected readonly form = inject(FormBuilder).nonNullable.group(
     {
@@ -58,18 +48,7 @@ export class RegisterPage {
     { validators: [passwordsMatch] },
   );
 
-  constructor() {
-    for (const field of Object.keys(this.form.controls) as RegisterField[]) {
-      const control: AbstractControl = this.form.controls[field];
-      control.valueChanges
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-          if (this.serverErrors()[field]) {
-            this.serverErrors.update(({ [field]: _removed, ...rest }) => rest);
-          }
-        });
-    }
-  }
+  protected readonly serverErrors = trackServerErrors(this.form.controls);
 
   protected fieldError(field: RegisterField): string | null {
     const control = this.form.controls[field];

@@ -7,7 +7,7 @@ import {
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
@@ -27,7 +27,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     MessageService,
-    ConfirmationService,
     // Restore the session (token + user) before the first navigation runs the guards.
     provideAppInitializer(() => {
       inject(AuthService).loadCurrentUser();

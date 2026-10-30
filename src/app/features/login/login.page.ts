@@ -15,7 +15,6 @@ import { Logo } from '../../shared/logo/logo';
   imports: [ReactiveFormsModule, RouterLink, Card, InputText, Password, Button, Message, Logo],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.page.html',
-  styleUrl: './login.page.scss',
 })
 export class LoginPage {
   private readonly auth = inject(AuthService);
